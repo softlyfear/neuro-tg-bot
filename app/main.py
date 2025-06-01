@@ -6,11 +6,8 @@ from aiogram import Bot, Dispatcher
 from app.handlers import router
 
 
-logging.basicConfig(level=logging.INFO)
-
-
 async def main():
-    load_dotenv(dotenv_path="config/.env")
+    load_dotenv()
 
     token = os.getenv("TELEGRAM_API_KEY")
     if not token:
@@ -24,6 +21,7 @@ async def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
