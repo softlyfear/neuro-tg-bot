@@ -18,6 +18,7 @@ http_client = httpx.AsyncClient(
 client = AsyncOpenAI(api_key=api_key, http_client=http_client)
 
 
+# Обработка запроса на случайный факт
 async def get_random_gpt():
     response = await client.chat.completions.create(
         model="gpt-4.1-nano",
@@ -27,5 +28,14 @@ async def get_random_gpt():
                 "content": "Напищи любой рандомный факт",
             }
         ],
+    )
+    return response.choices[0].message.content
+
+
+# Диалог с gpt
+async def get_response_gpt(history: list[dict]) -> str:
+    response = await client.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=history,
     )
     return response.choices[0].message.content

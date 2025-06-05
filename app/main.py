@@ -5,7 +5,8 @@ import os
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 
-from app.main_handlers import router as main_router
+from app.chat_with_gpt import router as gpt_router
+from app.handlers import router as main_router
 from app.random_fact import router as random_fact_router
 
 
@@ -17,8 +18,10 @@ async def main():
 
     bot = Bot(token=token)
     dp = Dispatcher()
+
     dp.include_router(main_router)
     dp.include_router(random_fact_router)
+    dp.include_router(gpt_router)
 
     await dp.start_polling(bot)
 

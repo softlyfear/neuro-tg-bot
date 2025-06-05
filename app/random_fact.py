@@ -5,10 +5,16 @@ from aiogram.types import Message
 
 import app.keyboards as kb
 from app.open_ai import get_random_gpt
-from shared import cancel_flags, BotState
-from shared import get_user_lock
+from app.shared import get_user_lock, BotState, cancel_flags
 
 router  = Router()
+
+
+# Обработчик команды /random и кнопок "Получить рандомный факт" и "Хочу ещё факт"
+@router.message(F.text.in_(["Получить рандомный факт", "Хочу ещё факт"]))
+@router.message(Command('random'))
+async def get_random(message: Message, state: FSMContext):
+    await random_command(message, state)
 
 
 # Обработка функционала random
@@ -26,21 +32,10 @@ async def random_command(message: Message, state: FSMContext):
 
         if cancel_flags.get(user_id):  # Проверка отмены перед запросом
             return
-
+        
+        await message.chat.do("typing")
         fact = await get_random_gpt()
         if cancel_flags.get(user_id):  # Проверка отмены после запроса
             return
 
         await message.answer(fact)
-
-
-# Обработчик команды /random
-@router.message(Command('random'))
-async def get_random(message: Message, state: FSMContext):
-    await random_command(message, state)
-
-
-# Обработчик кнопки "Получить рандомный факт" и "Хочу ещё факт"
-@router.message(F.text.in_(["Получить рандомный факт", "Хочу ещё факт"]))
-async def get_fact_button(message: Message, state: FSMContext):
-    await random_command(message, state)
