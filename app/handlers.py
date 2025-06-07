@@ -16,7 +16,7 @@ async def cmd_start(message: Message):
 
 
 # Обработчик кнопки 'Закончить'
-@router.message(F.text.in_(['Закончить', "Закончить диалог"]))
+@router.message(F.text.in_(['Закончить', "Закончить диалог", "Выйти в главное меню"]))
 async def finish_button(message: Message, state: FSMContext):
     user_id = message.from_user.id
     cancel_flags.pop(user_id, None)
@@ -29,11 +29,6 @@ async def finish_button(message: Message, state: FSMContext):
 
 async def start_finish_command(message: Message):
     await message.answer(
-        f"Вы в главном меню, {message.from_user.username}"
-        f"\nВот список доступных команд:"
-        f"\n\n/random - получить рандомный факт"
-        f"\n/gpt - задать вопрос gpt"
-        f"\n/talk - диалог с известной личностью"
-        f"\n/quiz - квиз на выбранную тему",
+        f"Вы в главном меню, {message.from_user.username}",
         reply_markup = kb.main_menu
     )

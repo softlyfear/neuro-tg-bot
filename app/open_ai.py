@@ -39,3 +39,11 @@ async def get_response_gpt(history: list[dict]) -> str:
         messages=history,
     )
     return response.choices[0].message.content
+
+
+async def get_response_person(history: list[dict]) -> str:
+    response = await client.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=history,
+    )
+    return response.choices[0].message.content

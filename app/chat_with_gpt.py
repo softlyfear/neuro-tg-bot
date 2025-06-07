@@ -21,7 +21,7 @@ router  = Router()
 async def start_gpt_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.GPT)
     await message.answer(
-        "Вы вошли в диалог с GPT!\nНапишите свой вопрос!",
+        "Вы начали диалог с GPT!\nНапишите свой вопрос!",
         reply_markup=kb.chat_gpt_finish_button,
     )
 
@@ -56,7 +56,7 @@ async def chat_with_gpt(message: Message, state: FSMContext):
         history.append({"role": "user", "content": user_text})
 
         await message.chat.do("typing")
-        
+
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
