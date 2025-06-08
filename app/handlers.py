@@ -16,7 +16,7 @@ async def cmd_start(message: Message):
 
 
 # Обработчик кнопок 'Закончить', "Закончить диалог", "Выйти в главное меню"
-@router.message(F.text.in_(["'Закончить", "Закончить диалог", "Выйти в главное меню"]))
+@router.message(F.text.in_(["Закончить", "Закончить диалог", "Выйти в главное меню"]))
 async def finish_button(message: Message, state: FSMContext):
     user_id = message.from_user.id  # Получаем id пользователя
     cancel_flags.pop(user_id, None)  # Сбрасываем состояние пользователя

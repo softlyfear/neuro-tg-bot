@@ -65,7 +65,7 @@ async def chat_with_gpt(message: Message, state: FSMContext):
         history = get_history(user_id)
         history.append({"role": "user", "content": user_text})
 
-        await message.chat.do("typing")
+        await message.chat.do("typing")  # Надпись печатает в диалоге пока выполняется запрос
 
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})

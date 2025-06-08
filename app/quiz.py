@@ -65,7 +65,7 @@ async def start_new_chat(message: Message, state: FSMContext):
 
 
 # Реагируем на кол беки в состоянии QUIZ
-@router.callback_query(BotState.QUIZ, F.data.in_(['history', 'movie', 'science', 'games']))
+@router.callback_query(BotState.QUIZ, F.data.in_(["history", "movie", "science", "games"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
     selected_quiz = callback.data
