@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 
 import app.keyboards as kb
 from app.open_ai import get_response_gpt
@@ -20,6 +20,13 @@ router  = Router()
 @router.message(F.text == "Задать вопрос gpt")
 async def start_gpt_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.GPT)
+
+    try:
+        photo = FSInputFile("pictures/chatgpt.jpg")
+        await message.answer_photo(photo=photo)
+    except Exception as e:
+        print(e)
+
     await message.answer(
         "Вы начали диалог с GPT!\nНапишите свой вопрос!",
         reply_markup=kb.chat_gpt_finish_button,

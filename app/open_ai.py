@@ -25,7 +25,7 @@ async def get_random_gpt():
         messages=[
             {
                 "role": "user",
-                "content": "Напищи любой рандомный факт",
+                "content": "Напиши любой рандомный факт",
             }
         ],
     )
@@ -42,6 +42,13 @@ async def get_response_gpt(history: list[dict]) -> str:
 
 
 async def get_response_person(history: list[dict]) -> str:
+    response = await client.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=history,
+    )
+    return response.choices[0].message.content
+
+async def get_response_quiz(history: list[dict]) -> str:
     response = await client.chat.completions.create(
         model="gpt-4.1-nano",
         messages=history,

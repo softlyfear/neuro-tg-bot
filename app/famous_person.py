@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 
 import app.keyboards as kb
 from app.open_ai import get_response_person
@@ -19,6 +19,13 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     cancel_flags.pop(user_id, None)
 
     await state.set_state(BotState.TALK)
+
+    try:
+        photo = FSInputFile("pictures/persons.png")
+        await message.answer_photo(photo=photo)
+    except Exception as e:
+        print(e)
+
     await message.answer(
         "Вы можете поговорить например на такие темы:", reply_markup=kb.main_menu_bottom
     )
