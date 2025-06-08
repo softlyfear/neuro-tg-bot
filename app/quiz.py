@@ -16,8 +16,9 @@ from app.shared import (
 router  = Router()
 
 
+# Обработчик команды "quiz" и кнопки "Квиз"
 @router.message(Command("quiz"))
-@router.message(F.text == 'Квиз')
+@router.message(F.text == "Квиз")
 async def start_famous_person_chat(message: Message, state: FSMContext):
 
     user_id = message.from_user.id
@@ -44,6 +45,7 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     )
 
 
+# Обработчик кнопки "Начать новый квиз"
 @router.message(BotState.QUIZ, F.text == "Начать новый квиз")
 async def start_new_chat(message: Message, state: FSMContext):
 
@@ -62,6 +64,7 @@ async def start_new_chat(message: Message, state: FSMContext):
     )
 
 
+# Реагируем на кол беки в состоянии QUIZ
 @router.callback_query(BotState.QUIZ, F.data.in_(['history', 'movie', 'science', 'games']))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
@@ -97,6 +100,7 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
         await callback.message.answer(response, reply_markup=kb.quiz_finish_button)
 
 
+# Ловим сообщения от пользователя в состоянии QUIZ и отвечаем ему
 @router.message(BotState.QUIZ)
 async def quiz(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -112,8 +116,6 @@ async def quiz(message: Message, state: FSMContext):
 
         user_text = message.text
         history = get_history(user_id)
-
-        # НЕ добавляем system_prompt здесь — он уже был добавлен при старте темы
 
         history.append({"role": "user", "content": user_text})
 

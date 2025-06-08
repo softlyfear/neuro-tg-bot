@@ -10,9 +10,9 @@ from app.shared import get_user_lock, BotState, cancel_flags
 router  = Router()
 
 
-# Обработчик команды /random и кнопок "Получить рандомный факт" и "Хочу ещё факт"
+# Обработчик команды /random и кнопки "Получить рандомный факт"
 @router.message(F.text == "Получить рандомный факт")
-@router.message(Command('random'))
+@router.message(Command("random"))
 async def get_random(message: Message, state: FSMContext):
 
     try:
@@ -24,12 +24,13 @@ async def get_random(message: Message, state: FSMContext):
     await random_command(message, state)
 
 
+# Обработчик кнопки "Хочу ещё факт", тут уже не будет повторно вставляться картинка
 @router.message(F.text == "Хочу ещё факт")
 async def get_random2(message: Message, state: FSMContext):
     await random_command(message, state)
 
 
-# Обработка функционала random
+# Запрос к open_ai на генерацию факта
 async def random_command(message: Message, state: FSMContext):
     user_id = message.from_user.id
     lock = get_user_lock(user_id)

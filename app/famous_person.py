@@ -10,15 +10,16 @@ from app.shared import BotState, cancel_flags, get_user_lock, get_history, user_
 router  = Router()
 
 
+# Обработчики команды "/talk" и кнопок "Диалог с известной личностью", "Начать новый диалог"
 @router.message(Command("talk"))
-@router.message(F.text.in_(["Диалог с известной личностью", 'Начать новый диалог']) )
+@router.message(F.text.in_(["Диалог с известной личностью", "Начать новый диалог"]) )
 async def start_famous_person_chat(message: Message, state: FSMContext):
 
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.TALK)
+    await state.set_state(BotState.TALK)  # Задаем состояние TALK
 
     try:
         photo = FSInputFile("pictures/persons.png")
@@ -38,7 +39,8 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     )
 
 
-@router.callback_query(BotState.TALK, F.data.in_(["leo_tolstoy", "albert_einstein", 'cleopatra', "steve_jobs"]))
+# Реагируем на кол беки в состоянии TALK
+@router.callback_query(BotState.TALK, F.data.in_(["leo_tolstoy", "albert_einstein", "cleopatra", "steve_jobs"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
     selected_person = callback.data
@@ -54,12 +56,13 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=kb.chat_gpt_finish_button)
 
 
+# Ловим сообщения от пользователя в состоянии TALK и отвечаем ему
 @router.message(BotState.TALK)
 async def chat_with_person(message: Message, state: FSMContext):
     user_id = message.from_user.id
-    lock = get_user_lock(user_id)
+    lock = get_user_lock(user_id)  # создаем замок для пользователя
 
-    if lock.locked():
+    if lock.locked():  
         await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
         return
 

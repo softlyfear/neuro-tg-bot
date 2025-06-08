@@ -16,6 +16,7 @@ from app.shared import (
 router  = Router()
 
 
+# Обработчики команды "/gpt" и кнопки "Задать вопрос gpt"
 @router.message(Command("gpt"))
 @router.message(F.text == "Задать вопрос gpt")
 async def start_gpt_chat(message: Message, state: FSMContext):
@@ -33,6 +34,7 @@ async def start_gpt_chat(message: Message, state: FSMContext):
     )
 
 
+# Обработчик кнопки "Начать новый диалог"
 @router.message(BotState.GPT, F.text == "Начать новый диалог")
 async def start_new_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -45,6 +47,7 @@ async def start_new_chat(message: Message, state: FSMContext):
     )
 
 
+# Ловим сообщения от пользователя в состоянии GPT и отвечаем ему
 @router.message(BotState.GPT)
 async def chat_with_gpt(message: Message, state: FSMContext):
     user_id = message.from_user.id

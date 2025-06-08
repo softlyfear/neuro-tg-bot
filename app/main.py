@@ -18,16 +18,17 @@ async def main():
     if not token:
         raise ValueError("Переменная окружения TELEGRAM_API_KEY не найдена в .env")
 
-    bot = Bot(token=token)
-    dp = Dispatcher()
+    bot = Bot(token=token)  # Работа с api telegram
+    dp = Dispatcher()  # Создаем диспетчер
 
+    # Подключаем роутеры к диспетчеру
     dp.include_router(main_router)
     dp.include_router(random_fact_router)
     dp.include_router(gpt_router)
     dp.include_router(famous_person_router)
     dp.include_router(quiz_router)
 
-    await dp.start_polling(bot)
+    await dp.start_polling(bot)  # Пулим бота
 
 
 if __name__ == "__main__":

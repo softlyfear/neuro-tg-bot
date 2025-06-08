@@ -33,14 +33,14 @@ main_menu_bottom = ReplyKeyboardMarkup(
     input_field_placeholder="Выберите пункт меню"
 )
 
-# Кнопка закончить диалог с gpt
+# Закончить диалог
 chat_gpt_finish_button = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="Закончить диалог"), KeyboardButton(text="Начать новый диалог")]],
     resize_keyboard=True,
     input_field_placeholder="Выберите пункт меню"
 )
 
-# Кнопки выбора личности
+# Ввыбор личности
 famous_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Лев Толстой", callback_data="leo_tolstoy"),
                       InlineKeyboardButton(text="Альберт Эйнштейн", callback_data="albert_einstein")],
@@ -48,7 +48,7 @@ famous_chat = InlineKeyboardMarkup(
                       InlineKeyboardButton(text="Стив Джобс", callback_data="steve_jobs")],]
 )
 
-# Кнопки выбора
+# Выбора темы квиза
 quiz_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="История", callback_data='history'),
                       InlineKeyboardButton(text="Кино", callback_data='movie')],
@@ -56,6 +56,7 @@ quiz_chat = InlineKeyboardMarkup(
                       InlineKeyboardButton(text="Игры", callback_data="games")],]
 )
 
+# Закончить или начать новый квиз
 quiz_finish_button = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="Закончить"), KeyboardButton(text="Начать новый квиз")]],
     resize_keyboard=True,
