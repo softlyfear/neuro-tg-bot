@@ -3,9 +3,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile
 
-import app.keyboards as kb
-from app.open_ai import get_random_gpt
-from app.shared import get_user_lock, BotState, cancel_flags
+import app.utils.keyboards as kb
+from app.utils.open_ai import get_random_gpt
+from app.utils.shared import get_user_lock, BotState, cancel_flags
 
 router  = Router()
 

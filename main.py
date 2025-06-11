@@ -5,11 +5,11 @@ import os
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 
-from app.chat_with_gpt import router as gpt_router
-from app.famous_person import router as famous_person_router
-from app.handlers import router as main_router
-from app.quiz import router as quiz_router
-from app.random_fact import router as random_fact_router
+from app.features.chat_with_gpt import router as gpt_router
+from app.features.famous_person import router as famous_person_router
+from app.features.quiz import router as quiz_router
+from app.features.random_fact import router as random_fact_router
+from app.utils.common_handlers import router as main_router
 
 
 async def main():

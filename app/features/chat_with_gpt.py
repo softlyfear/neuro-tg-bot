@@ -3,9 +3,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile
 
-import app.keyboards as kb
-from app.open_ai import get_response_gpt
-from app.shared import (
+import app.utils.keyboards as kb
+from app.utils.open_ai import get_response_gpt
+from app.utils.shared import (
     get_user_lock,
     BotState,
     cancel_flags,
@@ -23,7 +23,7 @@ async def start_gpt_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.GPT)
 
     try:
-        photo = FSInputFile("pictures/chatgpt.jpg")
+        photo = FSInputFile("../pictures/chatgpt.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)

@@ -3,8 +3,8 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-import app.keyboards as kb
-from app.shared import cancel_flags, user_histories
+import app.utils.keyboards as kb
+from app.utils.shared import cancel_flags, user_histories
 
 router  = Router()
 

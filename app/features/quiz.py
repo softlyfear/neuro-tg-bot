@@ -3,9 +3,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile, CallbackQuery
 
-import app.keyboards as kb
-from app.open_ai import get_response_quiz
-from app.shared import (
+import app.utils.keyboards as kb
+from app.utils.open_ai import get_response_quiz
+from app.utils.shared import (
     BotState,
     cancel_flags,
     user_histories,
@@ -28,7 +28,7 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.QUIZ)
 
     try:
-        photo = FSInputFile("pictures/quiz.jpg")
+        photo = FSInputFile("../pictures/quiz.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)
