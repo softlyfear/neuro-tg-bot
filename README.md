@@ -31,12 +31,17 @@ echo "TELEGRAM_API_KEY=<YOUR BOT TOKEN>" 1> .env
 echo "OPENAI_API_KEY=<YOUR GTP TOKEN>" 1>> .env
 echo "PROXY_HTTP=<YOUR HTTP PROXY>" 1>> .env
 nano .env
+# ctrl+X Y Enter  сохранить изменения
 # proxy format http://login:password@ip:port
 ```
 
 ##### Установка зависимостей
 ```bash 
 pip install -r requirements.txt
+# Ручная установка
+# pip install aiogram
+# pip install openai
+# pip install dotenv
 ```
 
 ##### Создание tmux сессии и запуск бота
