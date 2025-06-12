@@ -9,3 +9,41 @@
 4. Переводчик - Быстро переводите текст на выбранные языки
 5. Диалог с известной личностью - Ведите диалог с предложенной личностью
 6. "Рекомендации по фильмам и книгам - Рекомендации по жанрам
+
+#### Установка
+
+##### Клонирование репозитория
+```bash
+git clone https://github.com/softlyfear/neuro-tg-bot
+```
+
+##### Установка и активация виртуального окружения
+```bash 
+cd neuro-tg-bot
+apt install python3-venv -y
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+##### Создание и редактирование файла .env
+```bash
+echo "TELEGRAM_API_KEY=<YOUR BOT TOKEN>" 1> .env
+echo "OPENAI_API_KEY=<YOUR GTP TOKEN>" 1>> .env
+echo "PROXY_HTTP=<YOUR HTTP PROXY>" 1>> .env
+nano .env
+# proxy format http://login:password@ip:port
+```
+
+##### Установка зависимостей
+```bash 
+pip install -r requirements.txt
+```
+
+##### Создание tmux сессии и запуск бота
+```bash
+tmux new -s tg_bot
+python3 main.py
+# ctrl+B D  выйти из сессии
+# tmux attach -t tg_bot  прикрепиться к сессии 
+# exit  убить сессию
+```
