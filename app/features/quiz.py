@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile, CallbackQuery
 
 import app.utils.keyboards as kb
-from app.utils.open_ai import get_response_quiz
+from app.utils.open_ai import get_response_gpt
 from app.utils.shared import (
     BotState,
     cancel_flags,
@@ -28,7 +28,7 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.QUIZ)
 
     try:
-        photo = FSInputFile("../pictures/quiz.jpg")
+        photo = FSInputFile("pictures/quiz.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)
@@ -94,7 +94,7 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
         history.append({"role": "system", "content": system_prompt})
 
         await callback.message.chat.do("typing")
-        response = await get_response_quiz(history)
+        response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
         await callback.message.answer(response, reply_markup=kb.quiz_finish_button)
@@ -121,7 +121,7 @@ async def quiz(message: Message, state: FSMContext):
 
         await message.chat.do("typing")
 
-        response = await get_response_quiz(history)
+        response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):

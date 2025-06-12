@@ -9,6 +9,8 @@ class BotState(StatesGroup):
     QUIZ = State()
     TALK = State()
     GPT = State()
+    TRANSLATER = State()
+    RECOMMENDATION = State()
 
 
 user_locks = {}  # Защита от спама

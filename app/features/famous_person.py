@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, FSInputFile
 
 import app.utils.keyboards as kb
-from app.utils.open_ai import get_response_person
+from app.utils.open_ai import get_response_gpt
 from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history, user_histories
 
 router  = Router()
@@ -22,7 +22,7 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.TALK)  # Задаем состояние TALK
 
     try:
-        photo = FSInputFile("../pictures/persons.png")
+        photo = FSInputFile("pictures/persons.png")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)
@@ -87,7 +87,7 @@ async def chat_with_person(message: Message, state: FSMContext):
 
         await message.chat.do("typing")
 
-        response = await get_response_person(history)
+        response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):  # Проверка отмены после запроса

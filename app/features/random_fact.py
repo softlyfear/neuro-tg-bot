@@ -4,8 +4,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile
 
 import app.utils.keyboards as kb
-from app.utils.open_ai import get_random_gpt
-from app.utils.shared import get_user_lock, BotState, cancel_flags
+from app.utils.open_ai import get_response_gpt
+from app.utils.shared import (
+    BotState,
+    cancel_flags,
+    get_user_lock,
+    get_history,
+)
 
 router  = Router()
 
@@ -35,6 +40,8 @@ async def random_command(message: Message, state: FSMContext):
     user_id = message.from_user.id
     lock = get_user_lock(user_id)
 
+    system_prompt = ("Напиши любой рандомный факт, максимально интересный, не повторяйся!")
+
     if lock.locked():
         await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
         return
@@ -43,12 +50,15 @@ async def random_command(message: Message, state: FSMContext):
         await state.set_state(BotState.FACT)
         await message.answer("Генерирую факт...", reply_markup=kb.fact_menu)
 
-        if cancel_flags.get(user_id):  # Проверка отмены перед запросом
-            return
-        
+        history = get_history(user_id)
+        history.append({"role": "system", "content": system_prompt})
+
         await message.chat.do("typing")
-        fact = await get_random_gpt()
-        if cancel_flags.get(user_id):  # Проверка отмены после запроса
+
+        response = await get_response_gpt(history)
+        history.append({"role": "assistant", "content": response})
+
+        if cancel_flags.get(user_id):
             return
 
-        await message.answer(fact)
+        await message.answer(response)

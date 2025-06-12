@@ -9,7 +9,8 @@ from aiogram.types import (
 main_menu = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="Получить рандомный факт"), KeyboardButton(text="Задать вопрос gpt")],
-        [KeyboardButton(text="Квиз"), KeyboardButton(text="Диалог с известной личностью")]
+        [KeyboardButton(text="Квиз"), KeyboardButton(text="Диалог с известной личностью")],
+        [KeyboardButton(text="Переводчик"), KeyboardButton(text="Рекомендации по фильмам и книгам")]
     ],
     resize_keyboard=True,
     input_field_placeholder="Выберите пункт меню"
@@ -61,4 +62,12 @@ quiz_finish_button = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="Закончить"), KeyboardButton(text="Начать новый квиз")]],
     resize_keyboard=True,
     input_field_placeholder="Выберите пункт меню"
+)
+
+# Выбор языка для перевода
+translate_chat = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="Russian", callback_data="russian"),
+                      InlineKeyboardButton(text="English", callback_data="english")],
+                     [InlineKeyboardButton(text="Japan", callback_data="japan"),
+                      InlineKeyboardButton(text="German", callback_data="german")],]
 )

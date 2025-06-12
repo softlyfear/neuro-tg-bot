@@ -1,0 +1,85 @@
+from aiogram import Router, F
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, CallbackQuery
+
+import app.utils.keyboards as kb
+from app.utils.open_ai import get_response_gpt
+from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history, user_histories
+
+router  = Router()
+
+
+# Обработчики команды "/translate" и кнопки "Переводчик"
+@router.message(Command("translate"))
+@router.message(F.text == "Переводчик")
+async def start_translater_chat(message: Message, state: FSMContext):
+
+    user_id = message.from_user.id
+    user_histories.pop(user_id, None)
+    cancel_flags.pop(user_id, None)
+
+    await state.set_state(BotState.TRANSLATER)  # Задаем состояние TRANSLATER
+
+    await message.answer(
+        "Список доступных языков: ", reply_markup=kb.main_menu_bottom
+    )
+    await message.answer(
+        "Перевод будет осуществлен с помощью GPT",
+        reply_markup=kb.translate_chat,
+    )
+
+
+# Реагируем на кол беки в состоянии TRANSLATER
+@router.callback_query(BotState.TRANSLATER, F.data.in_(["russian", "english", "japan", "german"]))
+async def start_new_chat(callback: CallbackQuery, state: FSMContext):
+    user_id = callback.from_user.id
+    select_language = callback.data
+
+    user_histories.pop(user_id, None)
+    cancel_flags.pop(user_id, None)
+
+    await state.set_state(BotState.TRANSLATER)
+    await state.update_data(language=select_language)
+    await callback.message.edit_reply_markup(reply_markup=None)
+    await callback.message.answer(f"Вы выбрали язык {select_language}\n"
+                                  f"Напишите текст для перевода",
+                                  reply_markup=kb.main_menu_bottom)
+
+
+# Ловим сообщения от пользователя в состоянии TRANSLATER и отвечаем ему
+@router.message(BotState.TRANSLATER)
+async def translater(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    lock = get_user_lock(user_id)  # создаем замок для пользователя
+
+    if lock.locked():
+        await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
+        return
+
+    async with lock:
+        if cancel_flags.get(user_id):  # Проверка отмены перед запросом
+            return
+
+        user_text = message.text
+        history = get_history(user_id)
+
+        data = await state.get_data()
+        language = data.get("language")
+
+        system_prompt = (
+            f"Пользователь выбрал язык {language}, тебе нужно любые его сообщения переводить на {language}"
+        )
+
+        history.append({"role": "system", "content": system_prompt})
+        history.append({"role": "user", "content": user_text})
+
+        await message.chat.do("typing")
+
+        response = await get_response_gpt(history)
+        history.append({"role": "assistant", "content": response})
+
+        if cancel_flags.get(user_id):  # Проверка отмены после запроса
+            return
+
+        await message.answer(response, reply_markup=kb.main_menu_bottom)

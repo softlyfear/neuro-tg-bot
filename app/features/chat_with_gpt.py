@@ -23,7 +23,7 @@ async def start_gpt_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.GPT)
 
     try:
-        photo = FSInputFile("../pictures/chatgpt.jpg")
+        photo = FSInputFile("pictures/chatgpt.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)
@@ -49,7 +49,7 @@ async def start_new_chat(message: Message, state: FSMContext):
 
 # Ловим сообщения от пользователя в состоянии GPT и отвечаем ему
 @router.message(BotState.GPT)
-async def chat_with_gpt(message: Message, state: FSMContext):
+async def chat_with_gpt(message: Message):
     user_id = message.from_user.id
     lock = get_user_lock(user_id)
 
