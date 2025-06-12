@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 
 import app.utils.keyboards as kb
 from app.utils.open_ai import get_response_gpt
@@ -20,6 +20,12 @@ async def start_translater_chat(message: Message, state: FSMContext):
     cancel_flags.pop(user_id, None)
 
     await state.set_state(BotState.TRANSLATER)  # Задаем состояние TRANSLATER
+
+    try:
+        photo = FSInputFile("app/pictures/translater.jpg")
+        await message.answer_photo(photo=photo)
+    except Exception as e:
+        print(e)
 
     await message.answer(
         "Список доступных языков: ", reply_markup=kb.main_menu_bottom

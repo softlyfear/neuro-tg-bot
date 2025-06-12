@@ -23,7 +23,7 @@ async def start_gpt_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.GPT)
 
     try:
-        photo = FSInputFile("pictures/chatgpt.jpg")
+        photo = FSInputFile("app/pictures/chatgpt.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)

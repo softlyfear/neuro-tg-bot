@@ -22,7 +22,7 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     await state.set_state(BotState.TALK)  # Задаем состояние TALK
 
     try:
-        photo = FSInputFile("pictures/persons.png")
+        photo = FSInputFile("app/pictures/persons.png")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)

@@ -21,7 +21,7 @@ router  = Router()
 async def get_random(message: Message, state: FSMContext):
 
     try:
-        photo = FSInputFile("pictures/did-you-know-icon.jpg")
+        photo = FSInputFile("app/pictures/did-you-know-icon.jpg")
         await message.answer_photo(photo=photo)
     except Exception as e:
         print(e)

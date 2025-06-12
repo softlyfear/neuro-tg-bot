@@ -41,7 +41,7 @@ chat_gpt_finish_button = ReplyKeyboardMarkup(
     input_field_placeholder="Выберите пункт меню"
 )
 
-# Ввыбор личности
+# Выбор личности
 famous_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Лев Толстой", callback_data="leo_tolstoy"),
                       InlineKeyboardButton(text="Альберт Эйнштейн", callback_data="albert_einstein")],
@@ -70,4 +70,20 @@ translate_chat = InlineKeyboardMarkup(
                       InlineKeyboardButton(text="English", callback_data="english")],
                      [InlineKeyboardButton(text="Japan", callback_data="japan"),
                       InlineKeyboardButton(text="German", callback_data="german")],]
+)
+
+# Выбор темы для рекомендации
+recommendation_chat = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="Фильмы", callback_data="movies"),
+                      InlineKeyboardButton(text="Книги", callback_data="books")],
+                     [InlineKeyboardButton(text="Музыка", callback_data="music")],]
+)
+
+# Меню фактов
+recommendation_chat_menu = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Не нравится"), KeyboardButton(text="Закончить")],
+    ],
+    resize_keyboard=True,
+    input_field_placeholder="Выберите пункт меню"
 )
