@@ -19,6 +19,8 @@ router  = Router()
 @router.message(F.text == "Получить рандомный факт")
 @router.message(Command("random"))
 async def get_random(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    cancel_flags.pop(user_id, None)
 
     try:
         photo = FSInputFile("app/pictures/did-you-know-icon.jpg")

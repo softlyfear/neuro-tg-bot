@@ -81,7 +81,12 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
 
     # Генерируем вопрос:
     lock = get_user_lock(user_id)
+
     async with lock:
+
+        if cancel_flags.get(user_id):
+            return
+
         history = get_history(user_id)
 
         system_prompt = (
@@ -96,6 +101,9 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
         await callback.message.chat.do("typing")
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
+
+        if cancel_flags.get(user_id):
+            return
 
         await callback.message.answer(response, reply_markup=kb.quiz_finish_button)
 
