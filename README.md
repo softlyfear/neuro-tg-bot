@@ -12,12 +12,12 @@
 
 #### Установка
 
-##### Клонирование репозитория
+##### 1. Клонирование репозитория
 ```bash
 git clone https://github.com/softlyfear/neuro-tg-bot
 ```
 
-##### Установка и активация виртуального окружения
+##### 2. Установка и активация виртуального окружения
 ```bash 
 cd neuro-tg-bot
 apt install python3-venv -y
@@ -25,7 +25,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-##### Создание и редактирование файла .env
+##### 3. Создание и редактирование файла .env
 ```bash
 echo "TELEGRAM_API_KEY=<YOUR BOT TOKEN>" 1> .env
 echo "OPENAI_API_KEY=<YOUR GTP TOKEN>" 1>> .env
@@ -35,7 +35,7 @@ nano .env
 # proxy format http://login:password@ip:port
 ```
 
-##### Установка зависимостей
+##### 4. Установка зависимостей
 ```bash 
 pip install -r requirements.txt
 # Ручная установка
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 # pip install dotenv
 ```
 
-##### Создание tmux сессии и запуск бота
+##### 5. Создание tmux сессии и запуск бота
 ```bash
 tmux new -s tg_bot
 python3 main.py
