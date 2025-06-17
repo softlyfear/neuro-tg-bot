@@ -1,3 +1,16 @@
+"""
+Роутер для режима рекомендации с помощью GPT.
+
+Реализация, где пользователь выбирает тему для рекомендаций, после пишет жанр.
+GPT дает список рекомендаций, а также присылает новый, если список не понравился.
+
+Список тем:
+1. История
+2. Кино
+3. Наука
+4. Игры
+"""
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -10,16 +23,20 @@ from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history,
 router  = Router()
 
 
-# Обработчики команды "/recommendation" и кнопки "Рекомендации по фильмам и книгам"
 @router.message(Command("recommendation"))
 @router.message(F.text == "Рекомендации по фильмам и книгам")
 async def start_recommendation_chat(message: Message, state: FSMContext):
+    """
+    Обработка кнопок для входа в режим рекомендаций.
 
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.RECOMMENDATION)  # Задаем состояние RECOMMENDATION
+    await state.set_state(BotState.RECOMMENDATION)
 
     try:
         photo = FSInputFile("app/pictures/topic.jpeg")
@@ -33,9 +50,14 @@ async def start_recommendation_chat(message: Message, state: FSMContext):
     )
 
 
-# Реагируем на кол беки в состоянии RECOMMENDATION
 @router.callback_query(BotState.RECOMMENDATION, F.data.in_(["movies", "books", "music"]))
 async def callback_recommendation(callback: CallbackQuery, state: FSMContext):
+    """
+    Обработка кнопок выбора темы.
+
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = callback.from_user.id
     select_topic = callback.data
 
@@ -51,18 +73,23 @@ async def callback_recommendation(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=kb.main_menu_bottom)
 
 
-# Ловим сообщения от пользователя в состоянии RECOMMENDATION и отвечаем ему
 @router.message(BotState.RECOMMENDATION)
 async def recommendation(message: Message, state: FSMContext):
+    """
+    Выдача рекомендаций пользователю на заданную им тему.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога и поддержание контекста
+    """
     user_id = message.from_user.id
-    lock = get_user_lock(user_id)  # создаем замок для пользователя
+    lock = get_user_lock(user_id)
 
     if lock.locked():
         await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
         return
 
     async with lock:
-        if cancel_flags.get(user_id):  # Проверка отмены перед запросом
+        if cancel_flags.get(user_id):
             return
 
         user_text = message.text
@@ -85,7 +112,7 @@ async def recommendation(message: Message, state: FSMContext):
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
-        if cancel_flags.get(user_id):  # Проверка отмены после запроса
+        if cancel_flags.get(user_id):
             return
 
         await message.answer(response, reply_markup=kb.recommendation_chat_menu)

@@ -1,3 +1,5 @@
+"""Reply и Inline клавиатуры для взаимодействия с ботом."""
+
 from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
@@ -46,7 +48,7 @@ famous_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Лев Толстой", callback_data="leo_tolstoy"),
                       InlineKeyboardButton(text="Альберт Эйнштейн", callback_data="albert_einstein")],
                      [InlineKeyboardButton(text="Клеопатра", callback_data="cleopatra"),
-                      InlineKeyboardButton(text="Стив Джобс", callback_data="steve_jobs")],]
+                      InlineKeyboardButton(text="Стив Джобс", callback_data="steve_jobs")], ]
 )
 
 # Выбора темы квиза
@@ -54,7 +56,7 @@ quiz_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="История", callback_data="history"),
                       InlineKeyboardButton(text="Кино", callback_data="movie")],
                      [InlineKeyboardButton(text="Наука", callback_data="science"),
-                      InlineKeyboardButton(text="Игры", callback_data="games")],]
+                      InlineKeyboardButton(text="Игры", callback_data="games")], ]
 )
 
 # Закончить или начать новый квиз
@@ -69,14 +71,14 @@ translate_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Russian", callback_data="russian"),
                       InlineKeyboardButton(text="English", callback_data="english")],
                      [InlineKeyboardButton(text="Japan", callback_data="japan"),
-                      InlineKeyboardButton(text="German", callback_data="german")],]
+                      InlineKeyboardButton(text="German", callback_data="german")], ]
 )
 
 # Выбор темы для рекомендации
 recommendation_chat = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Фильмы", callback_data="movies"),
                       InlineKeyboardButton(text="Книги", callback_data="books")],
-                     [InlineKeyboardButton(text="Музыка", callback_data="music")],]
+                     [InlineKeyboardButton(text="Музыка", callback_data="music")], ]
 )
 
 # Меню фактов

@@ -1,3 +1,5 @@
+"""Основной модуль для запуска neuro-tg-bot."""
+
 import asyncio
 import logging
 import os
@@ -15,15 +17,22 @@ from app.utils.common_handlers import router as common_handlers_router
 
 
 async def main():
+    """
+    Инициализация и запуск Telegram-бота.
+
+    - Загружает .env переменные
+    - Создает экземпляры Bot и Dispatcher
+    - Регистрирует роутеры
+    - Запускает long polling
+    """
     load_dotenv()
     token = os.getenv("TELEGRAM_API_KEY")
     if not token:
         raise ValueError("Переменная окружения TELEGRAM_API_KEY не найдена в .env")
 
-    bot = Bot(token=token)  # Работа с api telegram
-    dp = Dispatcher()  # Создаем диспетчер
+    bot = Bot(token=token)
+    dp = Dispatcher()
 
-    # Подключаем роутеры к диспетчеру
     dp.include_router(common_handlers_router)
     dp.include_router(random_fact_router)
     dp.include_router(gpt_router)
@@ -32,7 +41,7 @@ async def main():
     dp.include_router(translater_router)
     dp.include_router(recommendation_router)
 
-    await dp.start_polling(bot)  # Пулим бота
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":

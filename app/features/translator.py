@@ -1,3 +1,15 @@
+"""
+Роутер для режима переводчика на основе GPT.
+
+Пользователь выбирает язык, GPT переводит вводимые сообщения на выбранный язык.
+
+Список языков:
+1. Русский
+2. Английский
+3. Японский
+4. Немецкий
+"""
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -10,16 +22,20 @@ from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history,
 router  = Router()
 
 
-# Обработчики команды "/translate" и кнопки "Переводчик"
 @router.message(Command("translate"))
 @router.message(F.text == "Переводчик")
 async def start_translater_chat(message: Message, state: FSMContext):
+    """
+    Обработка кнопок для входа в режим переводчика.
 
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.TRANSLATER)  # Задаем состояние TRANSLATER
+    await state.set_state(BotState.TRANSLATER)
 
     try:
         photo = FSInputFile("app/pictures/translater.jpg")
@@ -36,9 +52,14 @@ async def start_translater_chat(message: Message, state: FSMContext):
     )
 
 
-# Реагируем на кол беки в состоянии TRANSLATER
 @router.callback_query(BotState.TRANSLATER, F.data.in_(["russian", "english", "japan", "german"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
+    """
+    Обработка кнопок выбора языка.
+
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = callback.from_user.id
     select_language = callback.data
 
@@ -53,18 +74,23 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=kb.main_menu_bottom)
 
 
-# Ловим сообщения от пользователя в состоянии TRANSLATER и отвечаем ему
 @router.message(BotState.TRANSLATER)
 async def translater(message: Message, state: FSMContext):
+    """
+    Обработка и перевод на выбранный пользователем язык.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога и поддержание контекста
+    """
     user_id = message.from_user.id
-    lock = get_user_lock(user_id)  # создаем замок для пользователя
+    lock = get_user_lock(user_id)
 
     if lock.locked():
         await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
         return
 
     async with lock:
-        if cancel_flags.get(user_id):  # Проверка отмены перед запросом
+        if cancel_flags.get(user_id):
             return
 
         user_text = message.text
@@ -85,7 +111,7 @@ async def translater(message: Message, state: FSMContext):
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
-        if cancel_flags.get(user_id):  # Проверка отмены после запроса
+        if cancel_flags.get(user_id):
             return
 
         await message.answer(response, reply_markup=kb.main_menu_bottom)

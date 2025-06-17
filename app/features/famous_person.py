@@ -1,3 +1,16 @@
+"""
+Роутер для режима диалог с известной личностью.
+
+Реализация, где GPT берет на себя роль выбранной пользователем личности и общается с ним в манере,
+стиле и мировоззрении этой личности.
+
+Список личностей:
+1. Лев Толстой
+2. Альберт Эйнштейн
+3. Клеопатра
+4. Стив Джобс
+"""
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -10,16 +23,20 @@ from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history,
 router  = Router()
 
 
-# Обработчики команды "/talk" и кнопок "Диалог с известной личностью", "Начать новый диалог"
 @router.message(Command("talk"))
 @router.message(F.text.in_(["Диалог с известной личностью", "Начать новый диалог"]) )
 async def start_famous_person_chat(message: Message, state: FSMContext):
+    """
+    Обработка кнопок для входа в режим диалога и известной личностью.
 
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.TALK)  # Задаем состояние TALK
+    await state.set_state(BotState.TALK)
 
     try:
         photo = FSInputFile("app/pictures/persons.png")
@@ -39,9 +56,14 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     )
 
 
-# Реагируем на кол беки в состоянии TALK
 @router.callback_query(BotState.TALK, F.data.in_(["leo_tolstoy", "albert_einstein", "cleopatra", "steve_jobs"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
+    """
+    Обработка кнопок выбора личности.
+
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = callback.from_user.id
     selected_person = callback.data
 
@@ -56,9 +78,14 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=kb.chat_gpt_finish_button)
 
 
-# Ловим сообщения от пользователя в состоянии TALK и отвечаем ему
 @router.message(BotState.TALK)
 async def chat_with_person(message: Message, state: FSMContext):
+    """
+    Выдача пользователю ответов в режиме выбранном им личности.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога и поддержание контекста
+    """
     user_id = message.from_user.id
     lock = get_user_lock(user_id)  # создаем замок для пользователя
 
@@ -90,7 +117,7 @@ async def chat_with_person(message: Message, state: FSMContext):
         response = await get_response_gpt(history)
         history.append({"role": "assistant", "content": response})
 
-        if cancel_flags.get(user_id):  # Проверка отмены после запроса
+        if cancel_flags.get(user_id):
             return
 
         await message.answer(response, reply_markup=kb.chat_gpt_finish_button)

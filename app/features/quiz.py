@@ -1,3 +1,14 @@
+"""
+Роутер для режима квиз с помощью GPT.
+
+Реализация, где GPT проводит квиз пользователю, на выбранную им тему и подсчитывает результат.
+
+Список тем квиза:
+1. Кино
+2. Наука
+3. Игры
+"""
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -16,11 +27,15 @@ from app.utils.shared import (
 router  = Router()
 
 
-# Обработчик команды "quiz" и кнопки "Квиз"
 @router.message(Command("quiz"))
 @router.message(F.text == "Квиз")
 async def start_famous_person_chat(message: Message, state: FSMContext):
+    """
+    Обработка кнопок для входа в режим квиз.
 
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
@@ -45,10 +60,14 @@ async def start_famous_person_chat(message: Message, state: FSMContext):
     )
 
 
-# Обработчик кнопки "Начать новый квиз"
 @router.message(BotState.QUIZ, F.text == "Начать новый квиз")
 async def start_new_chat(message: Message, state: FSMContext):
+    """
+    Обработка кнопки для нового квиза.
 
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
@@ -64,9 +83,14 @@ async def start_new_chat(message: Message, state: FSMContext):
     )
 
 
-# Реагируем на кол беки в состоянии QUIZ
 @router.callback_query(BotState.QUIZ, F.data.in_(["history", "movie", "science", "games"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
+    """
+    Выдача вопросов пользователю на заданную им тему.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога и поддержание контекста
+    """
     user_id = callback.from_user.id
     selected_quiz = callback.data
 
@@ -79,7 +103,6 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.answer("Тогда начнем!", reply_markup=kb.quiz_finish_button)
 
-    # Генерируем вопрос:
     lock = get_user_lock(user_id)
 
     async with lock:
@@ -108,9 +131,14 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
         await callback.message.answer(response, reply_markup=kb.quiz_finish_button)
 
 
-# Ловим сообщения от пользователя в состоянии QUIZ и отвечаем ему
 @router.message(BotState.QUIZ)
 async def quiz(message: Message, state: FSMContext):
+    """
+    Выдача новых вопросов пользователю на заданную им тему.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога и поддержание контекста
+    """
     user_id = message.from_user.id
     lock = get_user_lock(user_id)
 

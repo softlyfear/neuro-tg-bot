@@ -1,3 +1,5 @@
+"""Роутер с реализацией запроса к GPT, где пользователь получает интересный рандомный факт"""
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -15,10 +17,14 @@ from app.utils.shared import (
 router  = Router()
 
 
-# Обработчик команды /random и кнопки "Получить рандомный факт"
 @router.message(F.text == "Получить рандомный факт")
 @router.message(Command("random"))
 async def get_random(message: Message, state: FSMContext):
+    """
+    Обработка кнопок для получения рандомного факта.
+
+    - Сброс флага отмены
+    """
     user_id = message.from_user.id
     cancel_flags.pop(user_id, None)
 
@@ -31,14 +37,19 @@ async def get_random(message: Message, state: FSMContext):
     await random_command(message, state)
 
 
-# Обработчик кнопки "Хочу ещё факт", тут уже не будет повторно вставляться картинка
 @router.message(F.text == "Хочу ещё факт")
 async def get_random2(message: Message, state: FSMContext):
+    """Обработка кнопки генерации нового факта"""
     await random_command(message, state)
 
 
-# Запрос к open_ai на генерацию факта
 async def random_command(message: Message, state: FSMContext):
+    """
+    Выдача рандомного факта пользователю.
+
+    - Блокировка новых запросов, если предыдущий еще обрабатывается
+    - Сохранение истории диалога для генерации разных фактов
+    """
     user_id = message.from_user.id
     lock = get_user_lock(user_id)
 

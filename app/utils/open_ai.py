@@ -1,3 +1,5 @@
+"""Реализация взаимодействия с OpenAi с использованием HTTP proxy."""
+
 import os
 
 import httpx
@@ -19,8 +21,8 @@ http_client = httpx.AsyncClient(
 client = AsyncOpenAI(api_key=api_key, http_client=http_client)
 
 
-# Обработка запросов к чату GPT
 async def get_response_gpt(history: list[dict]) -> str:
+    """Обработка запросов к чату GPT."""
     response = await client.chat.completions.create(
         model="gpt-4.1-nano",
         messages=history
