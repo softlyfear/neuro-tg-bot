@@ -21,7 +21,16 @@ router = Router()
 @router.message(Command("gpt"))
 @router.message(F.text == "Задать вопрос gpt")
 async def start_gpt_chat(message: Message, state: FSMContext):
-    """Обработка кнопок для входа в режим работы с GPT."""
+    """
+    Обработка кнопок для входа в режим работы с GPT.
+
+    - Удаление истории диалога
+    - Сброс флага отмены
+    """
+
+    user_id = message.from_user.id
+    user_histories.pop(user_id, None)
+    cancel_flags.pop(user_id, None)
     await state.set_state(BotState.GPT)
 
     try:
