@@ -24,7 +24,7 @@ router  = Router()
 
 @router.message(Command("translate"))
 @router.message(F.text == "Переводчик")
-async def start_translater_chat(message: Message, state: FSMContext):
+async def start_translator_chat(message: Message, state: FSMContext):
     """
     Обработка кнопок для входа в режим переводчика.
 
@@ -35,7 +35,7 @@ async def start_translater_chat(message: Message, state: FSMContext):
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.TRANSLATER)
+    await state.set_state(BotState.TRANSLATOR)
 
     try:
         photo = FSInputFile("app/pictures/translater.jpg")
@@ -52,7 +52,7 @@ async def start_translater_chat(message: Message, state: FSMContext):
     )
 
 
-@router.callback_query(BotState.TRANSLATER, F.data.in_(["russian", "english", "japan", "german"]))
+@router.callback_query(BotState.TRANSLATOR, F.data.in_(["russian", "english", "japan", "german"]))
 async def start_new_chat(callback: CallbackQuery, state: FSMContext):
     """
     Обработка кнопок выбора языка.
@@ -66,7 +66,7 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
     user_histories.pop(user_id, None)
     cancel_flags.pop(user_id, None)
 
-    await state.set_state(BotState.TRANSLATER)
+    await state.set_state(BotState.TRANSLATOR)
     await state.update_data(language=select_language)
     await callback.message.edit_reply_markup(reply_markup=None)
     await callback.message.answer(f"Вы выбрали язык {select_language}\n"
@@ -74,7 +74,7 @@ async def start_new_chat(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=kb.main_menu_bottom)
 
 
-@router.message(BotState.TRANSLATER)
+@router.message(BotState.TRANSLATOR)
 async def translater(message: Message, state: FSMContext):
     """
     Обработка и перевод на выбранный пользователем язык.

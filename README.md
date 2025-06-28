@@ -14,7 +14,7 @@
 Создайте файл .env в корневой папке по такому шаблону, см. пункт 4 ниже
 ```
 TELEGRAM_API_KEY=<YOUR BOT TOKEN>
-OPENAI_API_KEY=<YOUR GTP TOKEN>
+OPENAI_API_KEY=<YOUR GPT TOKEN>
 PROXY_HTTP=<YOUR HTTP PROXY>
 # proxy format http://login:password@ip:port
 ```
@@ -41,9 +41,9 @@ source .venv/bin/activate
 
 ##### 4. Создание и редактирование файла .env
 ```bash
-echo "TELEGRAM_API_KEY=<YOUR BOT TOKEN>" 1> .env
-echo "OPENAI_API_KEY=<YOUR GTP TOKEN>" 1>> .env
-echo "PROXY_HTTP=<YOUR HTTP PROXY>" 1>> .env
+echo "TELEGRAM_API_KEY=<YOUR BOT TOKEN>" > .env
+echo "OPENAI_API_KEY=<YOUR GPT TOKEN>" >> .env
+echo "PROXY_HTTP=<YOUR HTTP PROXY>" >> .env
 nano .env
 # ctrl+X Y Enter  сохранить изменения
 # proxy format http://login:password@ip:port

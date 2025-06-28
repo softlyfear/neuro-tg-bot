@@ -6,14 +6,12 @@ from aiogram.fsm.state import State, StatesGroup
 
 
 class BotState(StatesGroup):
-    """
-    Группа состояний для различных режимов работы бота.
-    """
+    """Группа состояний для различных режимов работы бота."""
     FACT = State()
     QUIZ = State()
     TALK = State()
     GPT = State()
-    TRANSLATER = State()
+    TRANSLATOR = State()
     RECOMMENDATION = State()
 
 
