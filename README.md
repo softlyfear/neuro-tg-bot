@@ -24,7 +24,7 @@ PROXY_HTTP=<YOUR HTTP PROXY>
 
 #### Установка на Linux сервере(ubuntu)
 
-##### 1. Обновление сервера и установка зависимостей
+##### 1. Обновление сервера и установка пакетов
 
 ```bash
 sudo apt update && sudo apt upgrade -y
