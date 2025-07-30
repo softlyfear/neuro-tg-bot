@@ -34,6 +34,12 @@ source $HOME/.local/bin/env
 
 ##### 2. Установка бота и зависимостей
 
+```bash
+git clone https://github.com/softlyfear/neuro-tg-bot
+cd neuro-tg-bot/
+uv sync
+```
+
 ##### 3. Создание и редактирование файла .env
 
 ```bash
