@@ -9,6 +9,8 @@
 3. Игры
 """
 
+import logging
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -24,7 +26,8 @@ from app.utils.shared import (
     get_history,
 )
 
-router  = Router()
+logger = logging.getLogger(__name__)
+router = Router()
 
 
 @router.message(Command("quiz"))
@@ -151,6 +154,7 @@ async def quiz(message: Message, state: FSMContext):
             return
 
         user_text = message.text
+        logger.debug(f"User text message: {user_text}")
         history = get_history(user_id)
 
         history.append({"role": "user", "content": user_text})
@@ -158,6 +162,7 @@ async def quiz(message: Message, state: FSMContext):
         await message.chat.do("typing")
 
         response = await get_response_gpt(history)
+        logger.debug(f"GPT answer: {response}")
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):

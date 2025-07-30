@@ -11,6 +11,8 @@
 4. Стив Джобс
 """
 
+import logging
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -20,11 +22,12 @@ import app.utils.keyboards as kb
 from app.utils.open_ai import get_response_gpt
 from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history, user_histories
 
-router  = Router()
+logger = logging.getLogger(__name__)
+router = Router()
 
 
 @router.message(Command("talk"))
-@router.message(F.text.in_(["Диалог с известной личностью", "Начать новый диалог"]) )
+@router.message(F.text.in_(["Диалог с известной личностью", "Начать новый диалог"]))
 async def start_famous_person_chat(message: Message, state: FSMContext):
     """
     Обработка кнопок для входа в режим диалога и известной личностью.
@@ -89,7 +92,7 @@ async def chat_with_person(message: Message, state: FSMContext):
     user_id = message.from_user.id
     lock = get_user_lock(user_id)  # создаем замок для пользователя
 
-    if lock.locked():  
+    if lock.locked():
         await message.answer("⏳ Подожди, запрос ещё обрабатывается...")
         return
 
@@ -98,6 +101,7 @@ async def chat_with_person(message: Message, state: FSMContext):
             return
 
         user_text = message.text
+        logger.debug(f"User text message: {user_text}")
         history = get_history(user_id)
 
         data = await state.get_data()
@@ -115,6 +119,7 @@ async def chat_with_person(message: Message, state: FSMContext):
         await message.chat.do("typing")
 
         response = await get_response_gpt(history)
+        logger.debug(f"GPT answer: {response}")
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):

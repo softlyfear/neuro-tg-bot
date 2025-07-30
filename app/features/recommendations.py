@@ -10,6 +10,7 @@ GPT дает список рекомендаций, а также присыла
 3. Наука
 4. Игры
 """
+import logging
 
 from aiogram import Router, F
 from aiogram.filters import Command
@@ -20,7 +21,8 @@ import app.utils.keyboards as kb
 from app.utils.open_ai import get_response_gpt
 from app.utils.shared import BotState, cancel_flags, get_user_lock, get_history, user_histories
 
-router  = Router()
+logger = logging.getLogger(__name__)
+router = Router()
 
 
 @router.message(Command("recommendation"))
@@ -93,6 +95,7 @@ async def recommendation(message: Message, state: FSMContext):
             return
 
         user_text = message.text
+        logger.debug(f"User text message: {user_text}")
         history = get_history(user_id)
 
         data = await state.get_data()
@@ -110,6 +113,7 @@ async def recommendation(message: Message, state: FSMContext):
         await message.chat.do("typing")
 
         response = await get_response_gpt(history)
+        logger.debug(f"GPT answer: {response}")
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):

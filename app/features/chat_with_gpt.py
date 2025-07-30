@@ -1,5 +1,7 @@
 """Роутер с реализацией стандартного GPT интерфейса вопрос/ответ с сохранением контекста диалога"""
 
+import logging
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -15,6 +17,7 @@ from app.utils.shared import (
     user_histories,
 )
 
+logger = logging.getLogger(__name__)
 router = Router()
 
 
@@ -83,12 +86,14 @@ async def chat_with_gpt(message: Message):
             return
 
         user_text = message.text
+        logger.debug(f"User text message: {user_text}")
         history = get_history(user_id)
         history.append({"role": "user", "content": user_text})
 
         await message.chat.do("typing")
 
         response = await get_response_gpt(history)
+        logger.debug(f"GPT answer: {response}")
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):

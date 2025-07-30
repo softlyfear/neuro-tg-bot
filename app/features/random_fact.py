@@ -1,5 +1,7 @@
 """Роутер с реализацией запроса к GPT, где пользователь получает интересный рандомный факт"""
 
+import logging
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -14,7 +16,8 @@ from app.utils.shared import (
     get_history,
 )
 
-router  = Router()
+logger = logging.getLogger(__name__)
+router = Router()
 
 
 @router.message(F.text == "Получить рандомный факт")
@@ -69,6 +72,7 @@ async def random_command(message: Message, state: FSMContext):
         await message.chat.do("typing")
 
         response = await get_response_gpt(history)
+        logger.debug(f"GPT answer: {response}")
         history.append({"role": "assistant", "content": response})
 
         if cancel_flags.get(user_id):
